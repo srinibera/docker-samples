@@ -1,17 +1,36 @@
-name: Docker Image CI
+name: Manual Deployment with User Inputs
 
 on:
-  push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment Environment'
+        required: true
+        default: 'staging'
+        type: choice
+        options:
+          - staging
+          - production
+      version:
+        description: 'Application Version (optional)'
+        required: false
+        default: 'latest'
+      dry_run:
+        description: 'Run as Dry Run?'
+        required: true
+        type: boolean
+        default: false
 
 jobs:
-  build:
-    environment: build
+  deploy:
     runs-on: ubuntu-latest
-    
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      - name: Show User Inputs
+        run: |
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+
+      - name: Deploy Application
+        if: github.event.inputs.dry_run == 'false'
+        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
