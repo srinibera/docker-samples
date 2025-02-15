@@ -20,77 +20,62 @@ on:
         required: true
         type: boolean
         default: false
-
 jobs:
-  build:
+  # 1️⃣ CI: Build, Lint, and Test
+  ci:
+    name: Build & Test
     runs-on: ubuntu-latest
-    environment: build
     steps:
-      - name: Show User Inputs
-        run: |
-          echo "Environment: ${{ github.event.inputs.environment }}"
-          echo "Version: ${{ github.event.inputs.version }}"
-          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: building Application
-        if: github.event.inputs.dry_run == 'false'
-        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
+      - name: Install Dependencies
+        run: npm install  # Adjust for your stack (e.g., `pip install -r requirements.txt`)
 
-  test:
+      - name: Run Linter
+        run: npm run lint  # Example: Use ESLint for JavaScript
+
+      - name: Run Tests
+        run: npm test  # Run unit tests
+
+  # 2️⃣ Deploy to Development (Auto)
+  deploy-dev:
+    name: Deploy to Dev
     runs-on: ubuntu-latest
-    environment: test
-    needs: build
+    needs: ci  # Ensures CI passes before deploying
+    environment: dev  # Auto-deployment
     steps:
-      - name: Dev Show User Inputs
-        run: |
-          echo "Environment: ${{ github.event.inputs.environment }}"
-          echo "Version: ${{ github.event.inputs.version }}"
-          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+      - name: Deploy to Development
+        run: echo "Deploying to Dev Environment"
 
-      - name: testing Application
-        if: github.event.inputs.dry_run == 'false'
-        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
-
-  dev:
+  # 3️⃣ Deploy to QA (Auto after Dev)
+  deploy-qa:
+    name: Deploy to QA
     runs-on: ubuntu-latest
-    environment: dev
-    needs: [build, test]
+    needs: deploy-dev
+    environment: qa  # Auto-deployment
     steps:
-      - name: dev Show User Inputs
-        run: |
-          echo "Environment: ${{ github.event.inputs.environment }}"
-          echo "Version: ${{ github.event.inputs.version }}"
-          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+      - name: Deploy to QA
+        run: echo "Deploying to QA Environment"
 
-      - name: Deploy Application
-        if: github.event.inputs.dry_run == 'false'
-        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
-  
-  stage:
+  # 4️⃣ Deploy to Staging (Manual Approval Required)
+  deploy-staging:
+    name: Deploy to Staging
     runs-on: ubuntu-latest
-    environment: stage
-    needs: [build, test]
+    needs: deploy-qa
+    environment: staging  # Requires manual approval
+    timeout-minutes: 60  # Auto-fail if no approval within 60 minutes
     steps:
-      - name: stage Show User Inputs
-        run: |
-          echo "Environment: ${{ github.event.inputs.environment }}"
-          echo "Version: ${{ github.event.inputs.version }}"
-          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+      - name: Deploy to Staging
+        run: echo "Deploying to Staging Environment"
 
-      - name: Deploy Application
-        if: github.event.inputs.dry_run == 'false'
-        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
-  prod:
+  # 5️⃣ Deploy to Production (Final Approval Required)
+  deploy-prod:
+    name: Deploy to Production
     runs-on: ubuntu-latest
-    environment: prod
-    needs: stage
+    needs: deploy-staging
+    environment: production  # Requires manual approval
+    timeout-minutes: 60
     steps:
-      - name: stage Show User Inputs
-        run: |
-          echo "Environment: ${{ github.event.inputs.environment }}"
-          echo "Version: ${{ github.event.inputs.version }}"
-          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
-
-      - name: Deploy Application
-        if: github.event.inputs.dry_run == 'false'
-        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
+      - name: Deploy to Production
+        run: echo "Deploying to Production Environment"
