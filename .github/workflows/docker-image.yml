@@ -51,6 +51,21 @@ jobs:
         if: github.event.inputs.dry_run == 'false'
         run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
 
+  dev:
+    runs-on: ubuntu-latest
+    environment: dev
+    needs: [build, test]
+    steps:
+      - name: dev Show User Inputs
+        run: |
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+
+      - name: Deploy Application
+        if: github.event.inputs.dry_run == 'false'
+        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
+  
   stage:
     runs-on: ubuntu-latest
     environment: stage
@@ -65,7 +80,6 @@ jobs:
       - name: Deploy Application
         if: github.event.inputs.dry_run == 'false'
         run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
-
   prod:
     runs-on: ubuntu-latest
     environment: prod
