@@ -39,6 +39,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     environment: test
+    needs: build
     steps:
       - name: Dev Show User Inputs
         run: |
@@ -50,10 +51,25 @@ jobs:
         if: github.event.inputs.dry_run == 'false'
         run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
 
-  deploy:
+  stage:
     runs-on: ubuntu-latest
     environment: stage
     needs: [build, test]
+    steps:
+      - name: stage Show User Inputs
+        run: |
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+
+      - name: Deploy Application
+        if: github.event.inputs.dry_run == 'false'
+        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
+
+  prod:
+    runs-on: ubuntu-latest
+    environment: prod
+    needs: stage
     steps:
       - name: stage Show User Inputs
         run: |
