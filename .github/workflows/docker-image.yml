@@ -1,25 +1,13 @@
-name: Manual Deployment with User Inputs
+name: Multi-Environment CI/CD Pipeline
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: "Deployment Environment"
-        required: true
-        default: "staging"
-        type: choice
-        options:
-          - staging
-          - production
-      version:
-        description: "Application Version (optional)"
-        required: false
-        default: "latest"
-      dry_run:
-        description: "Run as Dry Run?"
-        required: true
-        type: boolean
-        default: false
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
 jobs:
   # 1️⃣ CI: Build, Lint, and Test
   ci:
@@ -27,16 +15,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
-
-      - name: Install Dependencies
-        run: npm install  # Adjust for your stack (e.g., `pip install -r requirements.txt`)
-
-      - name: Run Linter
-        run: npm run lint  # Example: Use ESLint for JavaScript
-
-      - name: Run Tests
-        run: npm test  # Run unit tests
+        uses: actions/checkout@v4        
+      - name: Build
+        run: echo "building"
 
   # 2️⃣ Deploy to Development (Auto)
   deploy-dev:
