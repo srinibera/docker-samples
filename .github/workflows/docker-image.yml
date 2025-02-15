@@ -4,28 +4,58 @@ on:
   workflow_dispatch:
     inputs:
       environment:
-        description: 'Deployment Environment'
+        description: "Deployment Environment"
         required: true
-        default: 'staging'
+        default: "staging"
         type: choice
         options:
           - staging
           - production
       version:
-        description: 'Application Version (optional)'
+        description: "Application Version (optional)"
         required: false
-        default: 'latest'
+        default: "latest"
       dry_run:
-        description: 'Run as Dry Run?'
+        description: "Run as Dry Run?"
         required: true
         type: boolean
         default: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
+    environment: build
     steps:
       - name: Show User Inputs
+        run: |
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+
+      - name: building Application
+        if: github.event.inputs.dry_run == 'false'
+        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
+
+  test:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - name: Dev Show User Inputs
+        run: |
+          echo "Environment: ${{ github.event.inputs.environment }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          echo "Dry Run: ${{ github.event.inputs.dry_run }}"
+
+      - name: testing Application
+        if: github.event.inputs.dry_run == 'false'
+        run: echo "Deploying version ${{ github.event.inputs.version }} to ${{ github.event.inputs.environment }}"
+
+  deploy:
+    runs-on: ubuntu-latest
+    environment: stage
+    needs: [build, test]
+    steps:
+      - name: stage Show User Inputs
         run: |
           echo "Environment: ${{ github.event.inputs.environment }}"
           echo "Version: ${{ github.event.inputs.version }}"
