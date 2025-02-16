@@ -18,6 +18,8 @@ jobs:
         uses: actions/checkout@v4        
       - name: Build
         run: echo "building"
+      - name: docker
+        run: docker images
 
   # 2️⃣ Deploy to Development (Auto)
   deploy-dev:
