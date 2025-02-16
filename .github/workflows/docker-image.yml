@@ -20,6 +20,8 @@ jobs:
         run: echo "building"
       - name: docker
         run: docker images
+      - name: app path
+        run: pwd
 
   # 2️⃣ Deploy to Development (Auto)
   deploy-dev:
