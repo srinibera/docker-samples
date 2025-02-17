@@ -37,7 +37,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: workflow-summary
-          path: reports/SUMMARY.md
+          path: docs/SUMMARY.md
 
   # 2️⃣ Deploy to Development (Auto)
   deploy-dev:
