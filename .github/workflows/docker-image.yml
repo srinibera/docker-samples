@@ -22,6 +22,22 @@ jobs:
         run: docker images
       - name: app path
         run: pwd
+      - name: Create a Markdown Summary
+        run: |
+          echo "# Build and Test Results" > docs/SUMMARY.md
+          echo "## Workflow Summary" >> docs/SUMMARY.md
+          echo "### Tests Passed: $(grep -c 'passed' test_results.log)" >> docs/SUMMARY.md
+          echo "### Tests Failed: $(grep -c 'failed' test_results.log)" >> docs/SUMMARY.md
+          echo "### Code Coverage: $(grep -oP '\d+\.\d+' coverage/index.html | head -1)" >> docs/SUMMARY.md
+          git add docs/SUMMARY.md
+          git commit -m "Add summary report"
+          git push origin main  # Push to your branch
+
+      - name: Upload Summary File
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-summary
+          path: reports/SUMMARY.md
 
   # 2️⃣ Deploy to Development (Auto)
   deploy-dev:
