@@ -25,13 +25,7 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Install MySQL Client
-        run: apt-get update && apt-get install -y mysql-client
-
-      - name: Wait for MySQL
-        run: until mysql -h 127.0.0.1 -uroot -proot -e "SELECT 1"; do sleep 2; done
-
+        
       - name: Run Query
         run: mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
       - name: node version
