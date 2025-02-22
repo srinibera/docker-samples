@@ -10,7 +10,7 @@ jobs:
 
     services:
       mysql:
-        image: node:18.20.7-alpine3.21
+        image: node:18.20.7-alpine
         env:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: test_db
