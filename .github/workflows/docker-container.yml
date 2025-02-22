@@ -1,0 +1,38 @@
+name: Run with MySQL Container
+
+on: [push]
+
+jobs:
+  test-mysql:
+    runs-on: ubuntu-latest
+    container:
+      image: node:18  # Main job runs in Node.js container
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: test_db
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping --host=localhost --user=root --password=root"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Install MySQL Client
+        run: apt-get update && apt-get install -y mysql-client
+
+      - name: Wait for MySQL
+        run: until mysql -h 127.0.0.1 -uroot -proot -e "SELECT 1"; do sleep 2; done
+
+      - name: Run Query
+        run: mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
+      - name: node version
+        run: node -v
