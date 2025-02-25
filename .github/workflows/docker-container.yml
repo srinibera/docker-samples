@@ -27,18 +27,6 @@ jobs:
         uses: actions/checkout@v4
       - name: node version
         run: node -v
-      - name: Wait for MySQL to be ready
-        run: |
-          for i in {1..30}; do
-            if mysqladmin ping -h localhost --silent; then
-              echo "MySQL is up"
-              exit 0
-            fi
-            echo "Waiting for MySQL..."
-            sleep 2
-          done
-          echo "MySQL failed to start"
-          exit 1
       - name: SQL Client
         run: apk add mysql-client    
       - name: Run Query
