@@ -29,4 +29,4 @@ jobs:
       - name: SQL Client
         run: apk add mysql-client        
       - name: Run Query
-        run: mysql -h 127.0.0.1 -uroot -proot -e "SHOW DATABASES;"
+        run: mysql -h 0.0.0.0 -uroot -proot -e "SHOW DATABASES;"
