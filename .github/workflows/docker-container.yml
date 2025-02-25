@@ -1,5 +1,6 @@
 name: Run with MySQL Container
-on: workflow_dispatch:
+on: 
+  workflow_dispatch:
 
 jobs:
   test-mysql:
