@@ -1,5 +1,5 @@
 name: Run with MySQL Container
-on: [push]
+on: workflow_dispatch:
 
 jobs:
   test-mysql:
@@ -29,4 +29,4 @@ jobs:
       - name: SQL Client
         run: apk add mysql-client        
       - name: Run Query
-        run: mysql -uroot -proot -e "SHOW DATABASES;"
+        run: mysql -uroot -e "SHOW DATABASES;"
