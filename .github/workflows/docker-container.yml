@@ -30,6 +30,8 @@ jobs:
       - name: SQL Client
         run: apk add mysql-client    
       - name: Run Query
-        run: mysql localhost -uroot -e "SHOW DATABASES;"
+        run: |
+          /usr/sbin/mysqld
+          mysql localhost -uroot -e "SHOW DATABASES;"
       
 
