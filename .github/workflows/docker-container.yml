@@ -1,5 +1,4 @@
 name: Run with MySQL Container
-
 on: [push]
 
 jobs:
